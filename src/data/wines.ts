@@ -1,419 +1,269 @@
 import type { Locale } from '../i18n/LocaleContext'
 import type { WineId, WineSheetCopy, WineViewModel } from '../types/wine'
 
-/** Ordine di degustazione (dall’aperitivo al rosso strutturato). */
-export const WINE_ORDER: WineId[] = [
-  'grechetto-blasi',
-  'grechetto-casaioli',
-  'travertino',
-  'ciliegiolo-pilar',
-  'marciliano',
-]
+/** Ordine di degustazione (dal rosé al rosso più strutturato). */
+export const WINE_ORDER: WineId[] = ['asla-rosato', 'trebbiano-bocale', 'opra-madrevite']
 
 const META: Pick<WineViewModel, 'id' | 'bottleImage'>[] = [
-  { id: 'grechetto-blasi', bottleImage: '/wines/grechetto-blasi.png' },
-  { id: 'grechetto-casaioli', bottleImage: '/wines/grechetto-casaioli.png' },
-  { id: 'travertino', bottleImage: '/wines/travertino.png' },
-  { id: 'ciliegiolo-pilar', bottleImage: '/wines/ciliegiolo-pilar.png' },
-  { id: 'marciliano', bottleImage: '/wines/marciliano.png' },
+  { id: 'asla-rosato', bottleImage: '/wines/asla-rosato.png' },
+  { id: 'trebbiano-bocale', bottleImage: '/wines/trebbiano-bocale.png' },
+  { id: 'opra-madrevite', bottleImage: '/wines/opra-madrevite.png' },
 ]
 
 const COPY: Record<WineId, { it: WineSheetCopy; en: WineSheetCopy }> = {
-  'grechetto-blasi': {
+  'asla-rosato': {
     it: {
-      name: 'Grechetto',
-      producer: 'Cantina Blasi',
-      shortLabel: 'Umbria · annata 2024',
+      name: 'Asla',
+      producer: 'Leonardo Bussoletti',
+      shortLabel: 'Ciliegiolo di Narni rosato · annata 2025 · bio',
       journey: [
         {
           kind: 'terroir',
           title: 'Il luogo',
-          body: 'Umbertide, tra le pieghe appenniniche del Perugino: suoli argillosi e vigneti tra 300 e 450 m s.l.m. Il Grechetto — vitigno umbro — è allevato a cordone speronato in un microclima fresco e luminoso.',
+          body: 'San Gemini e Narni: vigneti tra 230 e 290 m su terreni argilloso-calcarei di medio impasto, guyot, resa contenuta (circa 700–800 g per pianta). Ciliegiolo 100% in agricoltura biologica certificata — il rosato “Asla” è un omaggio alle Cronache di Narnia.',
         },
         {
           kind: 'cellar',
           title: 'In cantina',
-          body: 'Fermentazione alcolica lenta a basse temperature (14–16 °C) per circa quindici giorni in acciaio; malolattica non svolta per preservare verticalità. Passaggio su fecce fini, poi affinamento in bottiglia. Grado indicativo: 13% vol.',
+          body: 'Vinificazione in bianco a grappolo intero; vendemmia manuale in cassette da 20 kg, fermentazione spontanea per circa venti giorni, poi affinamento sui depositi fini in acciaio a temperatura controllata per circa sei mesi. Grado indicativo: 12,5% vol.',
         },
         {
           kind: 'glass',
           title: 'Calice',
-          body: 'Bianco di medio corpo, armonico: polpa bianca, agrumi e acidità che dà slancio. Ottimo filo conduttore per aprire la serata.',
+          body: 'Rosa tenue e luminoso; al naso pompelmo rosa, agrumi, leggere spezie e mineralità salina. In bocca è fresco, delicato e sapido — un rosato di beva immediata, con finale pulito e verticale.',
         },
         {
           kind: 'service',
           title: 'Servizio',
-          body: 'Tra 6 e 8 °C. Buon margine di evoluzione in bottiglia (indicativamente 3–4 anni) restando bevibile.',
-        },
-        {
-          kind: 'table',
-          title: 'A tavola',
-          body: 'Aperitivi, antipasti leggeri, primi vegetariani, pesce al forno — “luce” prima dei rossi.',
+          body: 'Tra 8 e 10 °C, in calice medio. Non serve decantazione: l’annata giovane esprime subito profumi e freschezza.',
         },
       ],
-      links: [{ label: 'Grechetto — scheda prodotto', href: 'https://www.blasicantina.it/grechetto-umbria/' }],
+      pairing: {
+        dishName: 'Frittata con erbe selvatiche',
+        dishTraits:
+          'Uova morbide e burrose, note erbacee e leggermente amare delle erbe di campo, profilo sobrio senza sapori aggressivi. Texture compatta ma non pesante.',
+        pairingWhy:
+          'L’acidità del rosato taglia la ricchezza dell’uovo senza coprire le erbe; la mineralità e il pompelmo rosa rispecchiano la freschezza vegetale del piatto. Un abbinamento umbro “da merenda” che resta leggero e armonico.',
+      },
+      links: [
+        {
+          label: 'Asla Ciliegiolo Rosé — scheda ufficiale',
+          href: 'https://www.leonardobussoletti.it/le-cronache-di-narnia/asla-ciliegiolo-rose/',
+        },
+      ],
       disclaimer:
-        'Testi per la degustazione da materiali pubblici; l’annata in calice può variare.',
+        'Testi per la degustazione da materiali pubblici Bussoletti; l’annata in calice può variare.',
     },
     en: {
-      name: 'Grechetto',
-      producer: 'Cantina Blasi',
-      shortLabel: 'Umbria · 2024 vintage',
+      name: 'Asla',
+      producer: 'Leonardo Bussoletti',
+      shortLabel: 'Ciliegiolo di Narni rosé · 2025 vintage · organic',
       journey: [
         {
           kind: 'terroir',
           title: 'The place',
-          body: 'Umbertide, in the Perugia hills: clay soils and vineyards between 300 and 450 m a.s.l. Grechetto is trained cordon-spur in a bright, cool climate.',
+          body: 'San Gemini and Narni: vineyards at 230–290 m on medium-textured clay-limestone soils, cordon-trained, low yields (around 700–800 g per vine). 100% organic Ciliegiolo—the “Asla” rosé nods to The Chronicles of Narnia.',
         },
         {
           kind: 'cellar',
           title: 'In the cellar',
-          body: 'Slow cool fermentation (14–16 °C) for about fifteen days in stainless steel; no malolactic to keep freshness. Time on fine lees, then bottle. Approx. 13% abv.',
+          body: 'White vinification of whole clusters; hand harvest in 20 kg crates, spontaneous fermentation for about twenty days, then ageing on fine lees in temperature-controlled stainless steel for roughly six months. Approx. 12.5% abv.',
         },
         {
           kind: 'glass',
           title: 'In the glass',
-          body: 'Medium-bodied and harmonious: white fruit, citrus, and lively acidity—an ideal opening wine.',
+          body: 'Pale, bright pink; pink grapefruit, citrus, gentle spice and saline minerality. Fresh, delicate and savoury on the palate—a drink-now rosé with a clean, vertical finish.',
         },
         {
           kind: 'service',
           title: 'Service',
-          body: 'Serve at 6–8 °C. Can evolve in bottle (roughly 3–4 years) while staying refreshing.',
-        },
-        {
-          kind: 'table',
-          title: 'At the table',
-          body: 'Aperitifs, light starters, vegetarian pasta, baked fish—brightness before the reds.',
+          body: 'Serve at 8–10 °C in a medium glass. No decanting needed—the young vintage shows its aromatics right away.',
         },
       ],
-      links: [{ label: 'Grechetto — product page', href: 'https://www.blasicantina.it/en/grechetto-umbria/' }],
-      disclaimer: 'Notes for the tasting from public materials; the vintage poured may differ.',
+      pairing: {
+        dishName: 'Wild-herb frittata',
+        dishTraits:
+          'Soft, buttery eggs with herbal, slightly bitter field greens; restrained flavours and a compact but not heavy texture.',
+        pairingWhy:
+          'The rosé’s acidity cuts through the egg richness without masking the herbs; minerality and pink grapefruit echo the dish’s green freshness—a light, harmonious Umbrian pairing.',
+      },
+      links: [
+        {
+          label: 'Asla Ciliegiolo Rosé — official page',
+          href: 'https://www.leonardobussoletti.it/le-cronache-di-narnia/asla-ciliegiolo-rose/',
+        },
+      ],
+      disclaimer: 'Notes for this tasting from public Bussoletti materials; the vintage poured may differ.',
     },
   },
-  'grechetto-casaioli': {
+  'trebbiano-bocale': {
     it: {
-      name: 'Pelagalla',
-      producer: 'Agricola Casaioli',
-      shortLabel: 'Grechetto DOC Colli del Trasimeno · 2024',
+      name: 'Trebbiano Spoletino',
+      producer: 'Bocale',
+      shortLabel: 'Spoleto DOC · annata 2023',
       journey: [
         {
           kind: 'terroir',
           title: 'Il luogo',
-          body: 'Fontignano (PG), sulle pendici dei Colli del Trasimeno: vigneto familiare in un paesaggio di lago e brezza. Il Grechetto qui esprime tensione minerale e profumo di macchia mediterranea.',
+          body: 'Montefalco (PG): la famiglia Valentini recupera il Trebbiano spoletino autoctono su circa 9 ettari, di cui oltre 5 vitati. Vendemmia manuale nella prima decade di ottobre, in un paesaggio collinare dove il bianco esprime eleganza e capacità evolutiva.',
         },
         {
           kind: 'cellar',
           title: 'In cantina',
-          body: 'Vendemmia manuale, fermentazione in acciaio; una parte breve in barrique (ordine di pochi mesi) e almeno tre mesi in bottiglia prima dell’uscita, secondo lo stile aziendale della linea Pelagalla.',
+          body: 'Macerazione pellicolare a freddo 12–18 ore, chiarifica statica, fermentazione con lieviti indigeni a circa 18 °C, poi affinamento sui lieviti e sei mesi in acciaio. Giallo paglierino con riflessi verdolini.',
         },
         {
           kind: 'glass',
           title: 'Calice',
-          body: 'Giallo paglierino con riflessi verdolini; note di frutta bianca, nocciola e sentori delicati. Struttura piacevole e chiusura fresca, quasi mandorlata.',
+          body: 'Agrumi, pesca e foglia di pomodoro che evolvono verso note più speziate; bocca fresca, sapida, strutturata, con finale salino e rinfrescante. Un bianco “da pasto” con personalità.',
         },
         {
           kind: 'service',
           title: 'Servizio',
-          body: 'Ideale tra 10 e 12 °C. Versatile tra aperitivo e primo corso.',
-        },
-        {
-          kind: 'table',
-          title: 'A tavola',
-          body: 'Ravioli burro e salvia, pecorino leggermente stagionato, finger food umbri, lago e olio nuovo.',
+          body: 'Intorno ai 12–14 °C (la cantina indica anche ~18 °C per esprimere tutta la complessità). Bicchiere da bianco strutturato.',
         },
       ],
+      pairing: {
+        dishName: 'Tagliatelle al tartufo',
+        dishTraits:
+          'Pasta al burro o fonduta leggera, aroma intenso e umami del tartufo bianco, sapidità del parmigiano. Piatto aromatico ma non piccante, con grasso che avvolge il palato.',
+        pairingWhy:
+          'Struttura e sapidità del Trebbiano reggono l’umami del tartufo senza coprirlo; le note di foglia di pomodoro e il finale salino dialogano con burro e formaggio. È l’abbinamento classico umbro: bianco minerale e tartufo.',
+      },
       links: [
         {
-          label: 'Pelagalla — scheda prodotto',
-          href: 'https://www.agricolacasaioli.it/prodotto/pelagalla-grechetto-doc-colli-del-trasimeno/',
+          label: 'Trebbiano Spoletino — Bocale',
+          href: 'https://www.bocale.wine/prodotto/trebbiano-spoletino/',
         },
       ],
       disclaimer:
-        'Testi sintetizzati da schede pubbliche Casaioli; parametri possono variare per annata.',
+        'Testi sintetizzati da schede pubbliche Bocale; parametri possono variare per annata.',
     },
     en: {
-      name: 'Pelagalla',
-      producer: 'Agricola Casaioli',
-      shortLabel: 'Grechetto DOC Colli del Trasimeno · 2024',
+      name: 'Trebbiano Spoletino',
+      producer: 'Bocale',
+      shortLabel: 'Spoleto DOC · 2023 vintage',
       journey: [
         {
           kind: 'terroir',
           title: 'The place',
-          body: 'Fontignano (PG), on the Colli del Trasimeno slopes: a family vineyard between lake breezes and Mediterranean scrub. Grechetto shows mineral tension and aromatic lift.',
+          body: 'Montefalco (PG): the Valentini family works indigenous Trebbiano Spoletino across roughly 9 hectares, over 5 under vine. Hand harvest in early October on hills where the white shows elegance and ageing potential.',
         },
         {
           kind: 'cellar',
           title: 'In the cellar',
-          body: 'Hand harvest, stainless-steel fermentation, a short passage in barrique (a few months) and at least three months in bottle before release, per the Pelagalla style.',
+          body: 'Cold skin maceration for 12–18 hours, static settling, indigenous yeast fermentation at around 18 °C, lees ageing and six months in stainless steel. Straw yellow with green hints.',
         },
         {
           kind: 'glass',
           title: 'In the glass',
-          body: 'Straw yellow with green hints; white fruit, hazelnut, and a fresh, almost almond finish with pleasing structure.',
+          body: 'Citrus, peach and tomato leaf evolving toward spicier notes; fresh, savoury, structured palate with a saline, refreshing finish—a food-friendly white with character.',
         },
         {
           kind: 'service',
           title: 'Service',
-          body: 'Best around 10–12 °C—from aperitif to first course.',
-        },
-        {
-          kind: 'table',
-          title: 'At the table',
-          body: 'Butter-and-sage ravioli, lightly aged pecorino, Umbrian small plates, lake fish and new oil.',
+          body: 'Around 12–14 °C (the winery also suggests ~18 °C for full complexity). Use a generous white wine glass.',
         },
       ],
+      pairing: {
+        dishName: 'Tagliatelle with truffle',
+        dishTraits:
+          'Pasta with butter or a light sauce, intense white-truffle umami, savoury Parmesan. Aromatic but not spicy, with coating fat on the palate.',
+        pairingWhy:
+          'The wine’s structure and salinity support truffle umami without overpowering it; tomato-leaf notes and the saline finish match butter and cheese—the classic Umbrian white-and-truffle pairing.',
+      },
       links: [
         {
-          label: 'Pelagalla — product page',
-          href: 'https://www.agricolacasaioli.it/prodotto/pelagalla-grechetto-doc-colli-del-trasimeno/',
+          label: 'Trebbiano Spoletino — Bocale',
+          href: 'https://www.bocale.wine/prodotto/trebbiano-spoletino/',
         },
       ],
-      disclaimer: 'Summarised from public Casaioli sheets; details may vary by vintage.',
+      disclaimer: 'Summarised from public Bocale product pages; details may vary by vintage.',
     },
   },
-  travertino: {
+  'opra-madrevite': {
     it: {
-      name: 'Travertino',
-      producer: 'Cantina Cenci',
-      shortLabel: 'Sangiovese Umbria IGT · annata 2024 (bio)',
+      name: 'Opra',
+      producer: 'Madrevite',
+      shortLabel: 'Gamay del Trasimeno DOC · annata 2024',
       journey: [
         {
           kind: 'terroir',
           title: 'Il luogo',
-          body: 'Cantina di montagna su colline ricche di travertino e calcare: suoli che restituiscono verticalità e una nota salina al rosso. Vigneto gestito in logica agro-ecologica.',
+          body: 'Castiglione del Lago, riva del Trasimeno: vigneti a 320 m, esposizione sud-ovest, guyot ad alta densità. Il Gamay del Trasimeno è un biotipo storico di Grenache, coltivato da secoli sul lago — viticoltura sostenibile senza vigneto “monocultura”.',
         },
         {
           kind: 'cellar',
           title: 'In cantina',
-          body: 'Sangiovese (Grosso) selezionato a mano in cassette; diraspatura, fermentazione spontanea in acciaio e affinamento di circa sette mesi in acciaio — vino trasparente e bevibilissimo.',
+          body: 'Fermentazione spontanea senza lieviti aggiunti, macerazione variabile per annata; la cantina sperimenta anche un governo all’uso toscano per intensificare frutto e spezie. Dieci mesi in cemento, poi almeno tre in bottiglia. Grado indicativo: 13% vol.',
         },
         {
           kind: 'glass',
           title: 'Calice',
-          body: 'Rubino molto chiaro; ciliegia fresca, croccantezza e sale. Leggero, verticale, ideale come “respiro” tra bianchi e rossi più densi.',
+          body: 'Rubino vivo; prugna, amarena, macchia mediterranea e chiodo di garofano. Sorso fragrante, scorrevole, tannini fini e setosi, finale di ciliegia croccante — rosso beverino e moderno.',
         },
         {
           kind: 'service',
           title: 'Servizio',
-          body: 'Leggermente fresco: indicativamente 14–16 °C. Non serve decantazione.',
-        },
-        {
-          kind: 'table',
-          title: 'A tavola',
-          body: 'Salumi, bruschette, pizza gourmet, primi di verdura, formaggi dolci; ottimo anche leggermente fresco.',
+          body: 'Leggermente fresco, 14–16 °C, per esaltare freschezza e fragranza. Versatile da primi a carni leggere.',
         },
       ],
+      pairing: {
+        dishName: 'Pollo all’arrabbiata',
+        dishTraits:
+          'Pollo tenero, sugo di pomodoro piccante con aglio e peperoncino, sapidità e calore aromatico. Piatto succoso, con acidità del pomodoro e una nota “piccante” che chiede equilibrio.',
+        pairingWhy:
+          'Il Gamay porta frutto rosso e spezie senza tannini grezzi: l’acidità bilancia il pomodoro, la morbidezza del sorso mitiga il peperoncino. Un rosso leggero che non compete col piccante — accompagna invece di sovrastare.',
+      },
       links: [
         {
-          label: 'Travertino — scheda prodotto',
-          href: 'https://cantinacenci.it/products/travertino-sangiovese-igt-umbria-2024-bio',
+          label: 'Opra — scheda Madrevite',
+          href: 'https://www.madrevite.it/prodotto/opra/',
         },
       ],
       disclaimer:
-        'Testi da schede commerciali pubbliche Cenci; annata e grado alcolico possono variare.',
+        'Testi per la degustazione da materiali pubblici Madrevite; l’annata in calice può variare.',
     },
     en: {
-      name: 'Travertino',
-      producer: 'Cantina Cenci',
-      shortLabel: 'Sangiovese Umbria IGT · 2024 (organic)',
+      name: 'Opra',
+      producer: 'Madrevite',
+      shortLabel: 'Gamay del Trasimeno DOC · 2024 vintage',
       journey: [
         {
           kind: 'terroir',
           title: 'The place',
-          body: 'Mountain-side vineyards on travertine- and limestone-rich hills: soils that give verticality and a subtle saline note. Managed with agro-ecological care.',
+          body: 'Castiglione del Lago on Lake Trasimeno: vineyards at 320 m, south-west exposure, high-density guyot. Gamay del Trasimeno is a historic Grenache biotype grown for centuries on the lake—sustainable viticulture in a biodiverse landscape.',
         },
         {
           kind: 'cellar',
           title: 'In the cellar',
-          body: 'Sangiovese Grosso, hand-picked in crates; destemming, spontaneous fermentation in stainless steel, then roughly seven months’ ageing in steel—transparent and highly drinkable.',
+          body: 'Spontaneous fermentation with indigenous yeasts, vintage-dependent maceration; the winery also experiments with governo all’uso toscano for extra fruit and spice. Ten months in concrete, then at least three in bottle. Approx. 13% abv.',
         },
         {
           kind: 'glass',
           title: 'In the glass',
-          body: 'Very pale ruby; fresh cherry, crunch, and savouriness. Light, vertical—a “breath” between whites and heavier reds.',
+          body: 'Bright ruby; plum, sour cherry, Mediterranean scrub and clove. Fragrant, flowing palate, fine silky tannins, crisp cherry finish—a juicy, modern red.',
         },
         {
           kind: 'service',
           title: 'Service',
-          body: 'Serve slightly cool, around 14–16 °C. No decanting needed.',
-        },
-        {
-          kind: 'table',
-          title: 'At the table',
-          body: 'Cured meats, bruschetta, vegetable pasta, mild cheeses; also pleasant lightly chilled.',
+          body: 'Serve slightly cool, 14–16 °C, to highlight freshness and fragrance. Works from pasta to lighter meats.',
         },
       ],
+      pairing: {
+        dishName: 'Arrabbiata chicken',
+        dishTraits:
+          'Tender chicken in a spicy tomato sauce with garlic and chilli; savoury, warm aromatics. Juicy on the plate, with tomato acidity and heat that need balance.',
+        pairingWhy:
+          'Gamay brings red fruit and spice without harsh tannins: acidity matches the tomato, the soft palate eases the chilli. A light red that doesn’t fight the heat—it accompanies rather than overwhelms.',
+      },
       links: [
         {
-          label: 'Travertino — product page',
-          href: 'https://www.cantinacenci.it/en-usa/products/travertino-sangiovese-igt-umbria-2024-bio',
+          label: 'Opra — Madrevite product page',
+          href: 'https://www.madrevite.it/prodotto/opra/',
         },
       ],
-      disclaimer: 'From public Cenci product pages; vintage and abv may vary.',
-    },
-  },
-  'ciliegiolo-pilar': {
-    it: {
-      name: 'Ciliegiolo',
-      producer: 'Andrea Pilar',
-      shortLabel: 'Rosso IGT Umbria · annata 2024',
-      journey: [
-        {
-          kind: 'terroir',
-          title: 'Il luogo',
-          body: 'Alta Umbria, cantina a Umbertide (PG): terre tendenzialmente sabbiose e alluvionali, ricche di scheletro e potassio, oltre i 350 m s.l.m. Un Ciliegiolo che nasce da un progetto artigiano, con poche viti per ettaro e massimo rispetto del paesaggio.',
-        },
-        {
-          kind: 'cellar',
-          title: 'In cantina',
-          body: 'Diraspatura soffice e pigiatura parziale; fermentazione spontanea in acciaio per circa 15–20 giorni con macerazione molto breve. Malolattica guidata arieggiando il vino nuovo e rimescolando le fecce fini; qualche mese in acciaio con rimescoli periodici. Imbottigliamento senza chiarifica e senza additivi enologici, salvo piccole dosi di solforosa. Grado indicativo: 12% vol.',
-        },
-        {
-          kind: 'glass',
-          title: 'Calice',
-          body: 'Rubino di media concentrazione; fiori e frutti rossi, tocchi erbacei e balsamici. Bocca succosa e saporita, armoniosa ma con buon nerbo — vino di sete, pensato per la convivialità.',
-        },
-        {
-          kind: 'service',
-          title: 'Servizio',
-          body: 'Intorno ai 16–18 °C. Versatile da aperitivo a pasto; decantazione raramente necessaria su annate giovani.',
-        },
-        {
-          kind: 'table',
-          title: 'A tavola',
-          body: 'Merende umbre, salumi, bruschette, primi di terra, carni alla griglia e formaggi medi: un rosso mediterraneo che non disdegna piatti più elaborati.',
-        },
-      ],
-      links: [
-        {
-          label: 'Ciliegiolo — scheda sul sito Andrea Pilar',
-          href: 'https://www.andreapilar.it/progetto/vini/',
-        },
-      ],
-      disclaimer:
-        'Testi sintetizzati dalla pagina ufficiale “Vini” di Andrea Pilar; l’annata in calice e i parametri analitici possono variare.',
-    },
-    en: {
-      name: 'Ciliegiolo',
-      producer: 'Andrea Pilar',
-      shortLabel: 'Rosso IGT Umbria · 2024 vintage',
-      journey: [
-        {
-          kind: 'terroir',
-          title: 'The place',
-          body: 'High Umbria, based in Umbertide (PG): mostly sandy, alluvial soils rich in stones and potassium, above 350 m a.s.l. A handcrafted Ciliegiolo rooted in a low-intervention, terroir-first mindset.',
-        },
-        {
-          kind: 'cellar',
-          title: 'In the cellar',
-          body: 'Gentle destemming with partial crushing; spontaneous fermentation in stainless steel for about 15–20 days with a very short maceration. Malolactic fermentation with aeration and lees stirring; a few months’ maturation in steel with periodic stirring. Bottled without clarification or oenological additives except small doses of sulphur dioxide. Approx. 12% abv.',
-        },
-        {
-          kind: 'glass',
-          title: 'In the glass',
-          body: 'Medium-depth ruby; red flowers and red fruit, with herbaceous and balsamic hints. Juicy, savoury, harmonious yet structured—a thirst-quenching, Mediterranean red.',
-        },
-        {
-          kind: 'service',
-          title: 'Service',
-          body: 'Around 16–18 °C. Works from snack to main course; young vintages rarely need decanting.',
-        },
-        {
-          kind: 'table',
-          title: 'At the table',
-          body: 'Umbrian merende, cured meats, bruschetta, hearty pasta, grilled meats and semi-aged cheeses; happy alongside more elaborate dishes too.',
-        },
-      ],
-      links: [
-        {
-          label: 'Ciliegiolo — Andrea Pilar wines',
-          href: 'https://www.andreapilar.it/en/project/wines/',
-        },
-      ],
-      disclaimer:
-        'Summarised from the official Andrea Pilar “Wines” page; the vintage poured and analytical details may vary.',
-    },
-  },
-  marciliano: {
-    it: {
-      name: 'Marciliano',
-      producer: 'Famiglia Cotarella',
-      shortLabel: 'Rosso Umbria IGP · annata 2019',
-      journey: [
-        {
-          kind: 'terroir',
-          title: 'Il luogo',
-          body: 'Tenuta Marciliano a Montecchio (Terni): 12 ettari intorno ai 350 m s.l.m., su terreni sedimentari tendenzialmente calcarei e argillosi. Un anfiteatro di vigne dove Cabernet Sauvignon e Cabernet Franc esprimono struttura e raffinatezza.',
-        },
-        {
-          kind: 'cellar',
-          title: 'In cantina',
-          body: 'Vinificazione in controllo termico e percorso di affinamento che integra acciaio e legno secondo lo stile Cotarella, per modellare spezie, volume e tannini senza appesantire il messaggio.',
-        },
-        {
-          kind: 'glass',
-          title: 'Calice',
-          body: 'Rosso profondo al centro del bicchiere; naso complesso e caldo, richiami a mora matura. In bocca è avvolgente e speziato, con tannini decisi ma aggraziati e un finale persistente.',
-        },
-        {
-          kind: 'service',
-          title: 'Servizio',
-          body: 'Servire intorno ai 16–18 °C. Un rosso da “metà serata”, quando la conversazione si fa più conviviale.',
-        },
-        {
-          kind: 'table',
-          title: 'A tavola',
-          body: 'Carni importanti, selvaggina in salmì, formaggi semi-stagionati. La cantina suggerisce anche piatti lenti come un salmì: qui il vino trova ritmo e profondità.',
-        },
-      ],
-      links: [
-        {
-          label: 'Marciliano — scheda prodotto',
-          href: 'https://www.famigliacotarella.it/it/vini/cotarella/tenuta-marciliano/marciliano/',
-        },
-      ],
-      disclaimer:
-        'Testi redatti per la degustazione da materiali pubblici delle cantine; l’annata in calice può variare.',
-    },
-    en: {
-      name: 'Marciliano',
-      producer: 'Famiglia Cotarella',
-      shortLabel: 'Rosso Umbria IGP · 2019 vintage',
-      journey: [
-        {
-          kind: 'terroir',
-          title: 'The place',
-          body: 'Tenuta Marciliano in Montecchio (Terni): 12 hectares around 350 m a.s.l. on sedimentary, calcareous-clay soils. A vineyard amphitheatre where Cabernet Sauvignon and Cabernet Franc combine structure and finesse.',
-        },
-        {
-          kind: 'cellar',
-          title: 'In the cellar',
-          body: 'Temperature-controlled vinification and ageing that weaves stainless steel and oak in the Cotarella style—building spice, volume, and tannins without losing clarity.',
-        },
-        {
-          kind: 'glass',
-          title: 'In the glass',
-          body: 'Deep ruby at the core; a warm, complex nose with ripe blackberry tones. The palate is enveloping and spicy, with assertive yet polished tannins and a long, persistent finish.',
-        },
-        {
-          kind: 'service',
-          title: 'Service',
-          body: 'Serve around 16–18 °C. A mid-evening red, when the table slows down and flavours deepen.',
-        },
-        {
-          kind: 'table',
-          title: 'At the table',
-          body: 'Rich meats, game stews, semi-aged cheeses. The winery also points to slow dishes like salmì—where the wine finds rhythm and depth.',
-        },
-      ],
-      links: [
-        {
-          label: 'Marciliano — product page',
-          href: 'https://www.famigliacotarella.it/it/vini/cotarella/tenuta-marciliano/marciliano/',
-        },
-      ],
-      disclaimer:
-        'Notes prepared for this tasting from public winery materials; the vintage poured may differ.',
+      disclaimer: 'Notes for this tasting from public Madrevite materials; the vintage poured may differ.',
     },
   },
 }

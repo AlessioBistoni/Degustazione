@@ -83,6 +83,7 @@ function App() {
             <div className="wine-meta">
               <span className="wine-name">{wine.name}</span>
               <span className="wine-producer">{wine.producer}</span>
+              <span className="wine-pairing">{wine.pairing.dishName}</span>
             </div>
           </motion.button>
         ))}

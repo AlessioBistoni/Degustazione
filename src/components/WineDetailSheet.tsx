@@ -1,4 +1,4 @@
-import { useEffect, useMemo, type PointerEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent, type PointerEvent } from 'react'
 import { AnimatePresence, motion, useDragControls } from 'framer-motion'
 import { useLocale } from '../i18n/LocaleContext'
 import { UI } from '../i18n/uiStrings'
@@ -10,16 +10,31 @@ type Props = {
   onClose: () => void
 }
 
+const SLIDE_COUNT = 3
+const SWIPE_LOCK_PX = 8
+const SWIPE_TRIGGER_PX = 34
+
+type CarouselSwipe = {
+  pointerId: number
+  startX: number
+  startY: number
+  lastX: number
+  lastY: number
+  startOffset: number
+  startIndex: number
+  lock: 'horizontal' | 'vertical' | null
+}
+
 const listParent = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.07, delayChildren: 0.04 },
+    transition: { staggerChildren: 0.06, delayChildren: 0.03 },
   },
 }
 
 const listItem = {
-  hidden: { opacity: 0, y: 14 },
+  hidden: { opacity: 0, y: 12 },
   show: {
     opacity: 1,
     y: 0,
@@ -32,7 +47,7 @@ function startSheetDrag(
   e: PointerEvent<HTMLElement>,
 ) {
   const el = e.target as HTMLElement | null
-  if (el?.closest('button, a, [data-no-drag]')) return
+  if (el?.closest('button, a, [data-no-drag], .sheet-carousel')) return
   dragControls.start(e)
 }
 
@@ -40,6 +55,12 @@ export function WineDetailSheet({ wine, onClose }: Props) {
   const { locale } = useLocale()
   const t = UI[locale]
   const dragControls = useDragControls()
+  const carouselRef = useRef<HTMLDivElement>(null)
+  const carouselTrackRef = useRef<HTMLDivElement>(null)
+  const carouselSwipeRef = useRef<CarouselSwipe | null>(null)
+  const slideIndexRef = useRef(0)
+  const suppressCarouselClickRef = useRef(false)
+  const [slideIndex, setSlideIndex] = useState(0)
 
   const dragConstraints = useMemo(
     () => ({
@@ -48,6 +69,128 @@ export function WineDetailSheet({ wine, onClose }: Props) {
     }),
     [],
   )
+
+  const applyCarouselOffset = useCallback((offset: number, animated: boolean) => {
+    const track = carouselTrackRef.current
+    if (!track) return
+    track.style.transition = animated ? '' : 'none'
+    track.style.transform = `translate3d(${offset}px, 0, 0)`
+  }, [])
+
+  const setActiveSlide = useCallback((index: number, animated = true) => {
+    const next = Math.min(SLIDE_COUNT - 1, Math.max(0, index))
+    slideIndexRef.current = next
+    setSlideIndex(next)
+    const width = carouselRef.current?.clientWidth ?? 0
+    if (width) applyCarouselOffset(-next * width, animated)
+    return next
+  }, [applyCarouselOffset])
+
+  const goToSlide = useCallback((index: number) => {
+    const el = carouselRef.current
+    if (!el) return
+    el.classList.remove('sheet-carousel-dragging')
+    setActiveSlide(index)
+  }, [setActiveSlide])
+
+  const onCarouselPointerDown = useCallback((e: PointerEvent<HTMLDivElement>) => {
+    if (!e.isPrimary) return
+    const target = e.target as HTMLElement | null
+    if (target?.closest('button')) return
+    const el = carouselRef.current
+    if (!el || el.clientWidth === 0) return
+    const startIndex = slideIndexRef.current
+    carouselSwipeRef.current = {
+      pointerId: e.pointerId,
+      startX: e.clientX,
+      startY: e.clientY,
+      lastX: e.clientX,
+      lastY: e.clientY,
+      startOffset: -startIndex * el.clientWidth,
+      startIndex,
+      lock: null,
+    }
+  }, [])
+
+  const onCarouselPointerMove = useCallback((e: PointerEvent<HTMLDivElement>) => {
+    const swipe = carouselSwipeRef.current
+    const el = carouselRef.current
+    if (!swipe || !el || swipe.pointerId !== e.pointerId) return
+
+    const dx = e.clientX - swipe.startX
+    const dy = e.clientY - swipe.startY
+    const absX = Math.abs(dx)
+    const absY = Math.abs(dy)
+
+    if (!swipe.lock && Math.max(absX, absY) >= SWIPE_LOCK_PX) {
+      swipe.lock = absX > absY * 0.9 ? 'horizontal' : 'vertical'
+      if (swipe.lock === 'horizontal') {
+        el.classList.add('sheet-carousel-dragging')
+        e.currentTarget.setPointerCapture(e.pointerId)
+      } else {
+        el.classList.remove('sheet-carousel-dragging')
+      }
+    }
+
+    swipe.lastX = e.clientX
+    swipe.lastY = e.clientY
+
+    if (swipe.lock !== 'horizontal') {
+      return
+    }
+    e.preventDefault()
+    const width = el.clientWidth
+    const minOffset = -(SLIDE_COUNT - 1) * width
+    let offset = swipe.startOffset + dx
+    if (offset > 0) offset *= 0.28
+    if (offset < minOffset) offset = minOffset + (offset - minOffset) * 0.28
+    applyCarouselOffset(offset, false)
+  }, [applyCarouselOffset])
+
+  const finishCarouselSwipe = useCallback((e: PointerEvent<HTMLDivElement>) => {
+    const swipe = carouselSwipeRef.current
+    const el = carouselRef.current
+    if (!swipe || !el || swipe.pointerId !== e.pointerId) return
+
+    carouselSwipeRef.current = null
+    el.classList.remove('sheet-carousel-dragging')
+
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    }
+
+    if (swipe.lock !== 'horizontal') return
+
+    const dx = swipe.lastX - swipe.startX
+    const next =
+      Math.abs(dx) >= SWIPE_TRIGGER_PX
+        ? swipe.startIndex + (dx < 0 ? 1 : -1)
+        : swipe.startIndex
+    suppressCarouselClickRef.current = true
+    window.setTimeout(() => {
+      suppressCarouselClickRef.current = false
+    }, 140)
+    goToSlide(next)
+  }, [goToSlide])
+
+  const onCarouselClickCapture = useCallback((e: MouseEvent<HTMLDivElement>) => {
+    if (!suppressCarouselClickRef.current) return
+    e.preventDefault()
+    e.stopPropagation()
+  }, [])
+
+  useEffect(() => {
+    if (!wine) return
+    setActiveSlide(0, false)
+  }, [setActiveSlide, wine?.id])
+
+  useEffect(() => {
+    const onResize = () => setActiveSlide(slideIndexRef.current, false)
+    window.addEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('resize', onResize)
+    }
+  }, [setActiveSlide])
 
   useEffect(() => {
     if (!wine) return
@@ -83,7 +226,7 @@ export function WineDetailSheet({ wine, onClose }: Props) {
             role="dialog"
             aria-modal="true"
             aria-labelledby={`wine-title-${wine.id}`}
-            className="sheet"
+            className="sheet sheet-carousel-mode"
             initial={{ y: '108%', opacity: 0.6 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '108%', opacity: 0.5 }}
@@ -107,10 +250,7 @@ export function WineDetailSheet({ wine, onClose }: Props) {
                 <span className="sheet-handle" />
               </div>
 
-              <header className="sheet-head sheet-head-rich sheet-head-with-bottle">
-                <div className="sheet-bottle-hero" aria-hidden>
-                  <img className="sheet-bottle-hero-img" src={wine.bottleImage} alt="" decoding="async" />
-                </div>
+              <header className="sheet-head sheet-head-compact">
                 <div className="sheet-head-main">
                   <div className="sheet-head-text">
                     <p className="sheet-kicker">{wine.producer}</p>
@@ -127,55 +267,119 @@ export function WineDetailSheet({ wine, onClose }: Props) {
             </div>
 
             <div
-              className="sheet-drag-edge"
-              aria-hidden
-              onPointerDown={(e) => startSheetDrag(dragControls, e)}
-            />
-
-            <div className="sheet-body sheet-body-rich">
-              <p className="journey-eyebrow">{t.journeyLabel}</p>
-
-              <motion.ol
-                className="journey"
-                variants={listParent}
-                initial="hidden"
-                animate="show"
-                key={locale + wine.id}
-              >
-                {wine.journey.map((step, index) => (
-                  <motion.li key={step.kind + index} className="journey-step" variants={listItem}>
-                    <div className="journey-rail" aria-hidden>
-                      <span className="journey-node">{index + 1}</span>
-                      {index < wine.journey.length - 1 && <span className="journey-line" />}
+              ref={carouselRef}
+              className="sheet-carousel"
+              data-no-drag
+              aria-label={t.a11yCarousel}
+              onPointerDown={onCarouselPointerDown}
+              onPointerMove={onCarouselPointerMove}
+              onPointerUp={finishCarouselSwipe}
+              onPointerCancel={finishCarouselSwipe}
+              onClickCapture={onCarouselClickCapture}
+            >
+              <div ref={carouselTrackRef} className="sheet-carousel-track">
+                <section className="sheet-panel sheet-panel-cover" aria-label={t.slideCover}>
+                  <div className="sheet-cover-stage">
+                    <img
+                      className="sheet-cover-bottle"
+                      src={wine.bottleImage}
+                      alt=""
+                      decoding="async"
+                    />
+                    <div className="sheet-cover-veil" aria-hidden />
+                    <div className="sheet-cover-caption">
+                      <p className="sheet-cover-name">{wine.name}</p>
+                      <p className="sheet-cover-pairing-teaser">{wine.pairing.dishName}</p>
                     </div>
-                    <article className="journey-card">
-                      <div className="journey-card-top">
-                        <span className="journey-icon-wrap">
-                          <JourneyIcon kind={step.kind} className="journey-icon" />
-                        </span>
-                        <h3 className="journey-title">{step.title}</h3>
+                  </div>
+                </section>
+
+                <section className="sheet-panel sheet-panel-scroll" aria-label={t.slideWine}>
+                  <div className="sheet-panel-inner">
+                    <p className="journey-eyebrow">{t.journeyLabel}</p>
+                    <motion.ol
+                      className="journey"
+                      variants={listParent}
+                      initial="hidden"
+                      animate="show"
+                      key={locale + wine.id + '-wine'}
+                    >
+                      {wine.journey.map((step, index) => (
+                        <motion.li key={step.kind + index} className="journey-step" variants={listItem}>
+                          <div className="journey-rail" aria-hidden>
+                            <span className="journey-node">{index + 1}</span>
+                            {index < wine.journey.length - 1 && <span className="journey-line" />}
+                          </div>
+                          <article className="journey-card">
+                            <div className="journey-card-top">
+                              <span className="journey-icon-wrap">
+                                <JourneyIcon kind={step.kind} className="journey-icon" />
+                              </span>
+                              <h3 className="journey-title">{step.title}</h3>
+                            </div>
+                            <p className="journey-body">{step.body}</p>
+                          </article>
+                        </motion.li>
+                      ))}
+                    </motion.ol>
+
+                    <section className="sheet-links-rich">
+                      <h3 className="sheet-links-heading">{t.discover}</h3>
+                      <div className="link-row">
+                        {wine.links.map((l) => (
+                          <a
+                            key={l.href}
+                            href={l.href}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            className="link-pill"
+                          >
+                            <span className="link-pill-text">{l.label}</span>
+                            <span className="link-pill-arrow" aria-hidden>
+                              ↗
+                            </span>
+                          </a>
+                        ))}
                       </div>
-                      <p className="journey-body">{step.body}</p>
+                    </section>
+                  </div>
+                </section>
+
+                <section className="sheet-panel sheet-panel-scroll" aria-label={t.slidePairing}>
+                  <div className="sheet-panel-inner">
+                    <p className="journey-eyebrow">{t.pairingLabel}</p>
+                    <article className="pairing-card pairing-card-hero">
+                      <h3 className="pairing-dish-title">{wine.pairing.dishName}</h3>
                     </article>
-                  </motion.li>
+                    <article className="pairing-card">
+                      <h4 className="pairing-subheading">{t.pairingDishHeading}</h4>
+                      <p className="pairing-body">{wine.pairing.dishTraits}</p>
+                    </article>
+                    <article className="pairing-card pairing-card-accent">
+                      <h4 className="pairing-subheading">{t.pairingWhyHeading}</h4>
+                      <p className="pairing-body">{wine.pairing.pairingWhy}</p>
+                    </article>
+                    <p className="sheet-note">{wine.disclaimer}</p>
+                  </div>
+                </section>
+              </div>
+            </div>
+
+            <div className="sheet-carousel-footer" data-no-drag>
+              <div className="sheet-dots" role="tablist" aria-label={t.a11yCarousel}>
+                {[t.slideCover, t.slideWine, t.slidePairing].map((label, i) => (
+                  <button
+                    key={label}
+                    type="button"
+                    role="tab"
+                    aria-selected={slideIndex === i}
+                    aria-label={label}
+                    className={`sheet-dot${slideIndex === i ? ' sheet-dot-active' : ''}`}
+                    onClick={() => goToSlide(i)}
+                  />
                 ))}
-              </motion.ol>
-
-              <section className="sheet-links-rich">
-                <h3 className="sheet-links-heading">{t.discover}</h3>
-                <div className="link-row">
-                  {wine.links.map((l) => (
-                    <a key={l.href} href={l.href} target="_blank" rel="noreferrer noopener" className="link-pill">
-                      <span className="link-pill-text">{l.label}</span>
-                      <span className="link-pill-arrow" aria-hidden>
-                        ↗
-                      </span>
-                    </a>
-                  ))}
-                </div>
-              </section>
-
-              <p className="sheet-note">{wine.disclaimer}</p>
+              </div>
+              {slideIndex === 0 && <p className="sheet-swipe-hint">{t.swipeHint}</p>}
             </div>
           </motion.div>
         </>

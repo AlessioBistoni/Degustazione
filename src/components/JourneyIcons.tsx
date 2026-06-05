@@ -64,18 +64,6 @@ export function JourneyIcon({ kind, className }: { kind: JourneyKind; className?
           <path d="M10 17 H14" stroke={stroke} strokeWidth={sw} strokeLinecap="round" />
         </IconFrame>
       )
-    case 'table':
-      return (
-        <IconFrame className={className}>
-          <path
-            d="M5 10 H19 M7 10 V18 M17 10 V18 M4 18 H20"
-            stroke={stroke}
-            strokeWidth={sw}
-            strokeLinecap="round"
-          />
-          <path d="M9 14 H15" stroke={stroke} strokeWidth={sw} strokeLinecap="round" opacity={0.45} />
-        </IconFrame>
-      )
     default:
       return null
   }

@@ -2,7 +2,7 @@
 """Normalizza le foto bottiglia al canvas Marciliano (298×1024).
 
 - Blasi e Marciliano: foto su sfondo nero da studio → flood-fill ai bordi (come prima).
-- Casaioli, Travertino, Carmino: PNG già scontornati → si preserva l'alpha.
+- Altri vini: PNG già scontornati → si preserva l'alpha.
 """
 from __future__ import annotations
 
@@ -101,10 +101,10 @@ def scale_to_max_box(rgba: np.ndarray, max_h: int, max_w: int) -> np.ndarray:
     return np.array(pil)
 
 
-def paste_center(canvas: np.ndarray, piece: np.ndarray) -> None:
+def paste_center(canvas: np.ndarray, piece: np.ndarray, *, bottom_pad: int | None = None) -> None:
     ch, cw = canvas.shape[0], canvas.shape[1]
     ph, pw = piece.shape[0], piece.shape[1]
-    y0 = (ch - ph) // 2
+    y0 = ch - ph - bottom_pad if bottom_pad is not None else (ch - ph) // 2
     x0 = (cw - pw) // 2
     canvas[y0 : y0 + ph, x0 : x0 + pw] = piece
 
@@ -117,6 +117,7 @@ def normalize_to_marciliano_canvas(
     ref_w: int,
     *,
     needs_aspect_crop: bool,
+    align_bottom: bool = False,
 ) -> np.ndarray:
     """ref_h/ref_w = altezza e larghezza contenuto Marciliano (bottiglia)."""
     aspect_wh = ref_w / ref_h
@@ -127,7 +128,8 @@ def normalize_to_marciliano_canvas(
     cropped = work[y0:y1, x0:x1]
     scaled = scale_to_max_box(cropped, ref_h, ref_w)
     canvas = np.zeros((canvas_h, canvas_w, 4), dtype=np.uint8)
-    paste_center(canvas, scaled)
+    bottom_pad = (canvas_h - ref_h + 1) // 2 if align_bottom else None
+    paste_center(canvas, scaled, bottom_pad=bottom_pad)
     return canvas
 
 
@@ -143,26 +145,33 @@ def main() -> None:
 
     canvas_w, canvas_h = 298, 1024
 
-    jobs: list[tuple[str, np.ndarray, bool]] = [
-        ("grechetto-blasi.png", black_studio_rgba(src_dir / "blasi.png"), True),
-        ("grechetto-casaioli.png", load_cutout_rgba(src_dir / "casaioli.png"), False),
-        ("travertino.png", load_cutout_rgba(src_dir / "travertino.png"), False),
-        ("ciliegiolo-pilar.png", load_cutout_rgba(src_dir / "ciliegiolo-pilar.png"), False),
-        ("marciliano.png", marc, False),
+    default_box = (ref_h, ref_w)
+    current_tasting_box = (ref_h, canvas_w - 12)
+
+    jobs: list[tuple[str, np.ndarray, bool, tuple[int, int], bool]] = [
+        ("grechetto-blasi.png", black_studio_rgba(src_dir / "blasi.png"), True, default_box, False),
+        ("grechetto-casaioli.png", load_cutout_rgba(src_dir / "casaioli.png"), False, default_box, False),
+        ("travertino.png", load_cutout_rgba(src_dir / "travertino.png"), False, default_box, False),
+        ("ciliegiolo-pilar.png", load_cutout_rgba(src_dir / "ciliegiolo-pilar.png"), False, default_box, False),
+        ("marciliano.png", marc, False, default_box, False),
+        ("asla-rosato.png", load_cutout_rgba(src_dir / "asla-rosato.png"), False, current_tasting_box, True),
+        ("trebbiano-bocale.png", load_cutout_rgba(src_dir / "trebbiano-bocale.png"), False, current_tasting_box, True),
+        ("opra-madrevite.png", load_cutout_rgba(src_dir / "opra-madrevite.png"), False, current_tasting_box, True),
     ]
 
-    for name, rgba, aspect_crop in jobs:
+    for name, rgba, aspect_crop, (max_h, max_w), align_bottom in jobs:
         out = normalize_to_marciliano_canvas(
             rgba,
             canvas_w,
             canvas_h,
-            ref_h,
-            ref_w,
+            max_h,
+            max_w,
             needs_aspect_crop=aspect_crop,
+            align_bottom=align_bottom,
         )
         dst = out_dir / name
         save_rgba(dst, out)
-        print("OK", dst.relative_to(root), out.shape[1], out.shape[0], "ref", ref_w, ref_h)
+        print("OK", dst.relative_to(root), out.shape[1], out.shape[0], "box", max_w, max_h)
 
 
 if __name__ == "__main__":
