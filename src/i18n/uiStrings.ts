@@ -25,7 +25,7 @@ export type UiStrings = {
 export const UI: Record<Locale, UiStrings> = {
   it: {
     eyebrow: 'Degustazione privata',
-    title: 'In assaggio stasera',
+    title: 'In assaggio oggi',
     lede: 'Tocca una bottiglia: scorri le schede per il vino e l’abbinamento in cucina.',
     close: 'Chiudi',
     journeyLabel: 'Il vino',

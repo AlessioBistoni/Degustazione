@@ -123,7 +123,11 @@ export function WineDetailSheet({ wine, onClose }: Props) {
     const absY = Math.abs(dy)
 
     if (!swipe.lock && Math.max(absX, absY) >= SWIPE_LOCK_PX) {
-      swipe.lock = absX > absY * 0.9 ? 'horizontal' : 'vertical'
+      if (absX > absY * 1.35) swipe.lock = 'horizontal'
+      if (absY > absX * 1.1) swipe.lock = 'vertical'
+    }
+
+    if (swipe.lock) {
       if (swipe.lock === 'horizontal') {
         el.classList.add('sheet-carousel-dragging')
         e.currentTarget.setPointerCapture(e.pointerId)
