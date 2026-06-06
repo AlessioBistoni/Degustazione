@@ -602,7 +602,7 @@
 .sheet-cover-stage {
   position: relative;
   display: grid;
-  place-items: center;
+  grid-template-rows: minmax(0, 1fr) auto;
   min-height: 100%;
   border-radius: 1.15rem;
   overflow: hidden;
@@ -612,13 +612,25 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.sheet-cover-bottle {
+.sheet-cover-image {
   position: relative;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 0.75rem 0.75rem 0.25rem;
+  overflow: hidden;
+  background: radial-gradient(80% 72% at 50% 42%, rgba(212, 175, 122, 0.1), transparent 68%);
+}
+
+.sheet-cover-bottle {
+  position: absolute;
+  inset: 0.5rem 0.75rem 0.25rem;
   z-index: 1;
-  height: min(58dvh, 27rem);
-  width: auto;
-  max-width: 82%;
-  max-height: 88%;
+  display: block;
+  width: calc(100% - 1.5rem);
+  height: calc(100% - 0.75rem);
+  max-width: none;
+  max-height: none;
   object-fit: contain;
   object-position: center center;
   filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.55));
@@ -626,27 +638,13 @@
   -webkit-user-drag: none;
 }
 
-.sheet-cover-veil {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  background: linear-gradient(
-    180deg,
-    transparent 35%,
-    rgba(18, 16, 22, 0.35) 70%,
-    rgba(18, 16, 22, 0.88) 100%
-  );
-  pointer-events: none;
-}
-
 .sheet-cover-caption {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 3;
-  padding: 1.1rem 1.15rem 1.25rem;
+  position: relative;
+  z-index: 2;
+  padding: 0.8rem 1rem 0.9rem;
   text-align: center;
+  background: rgba(18, 16, 22, 0.72);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .sheet-cover-name {
@@ -662,6 +660,62 @@
   font-size: 0.92rem;
   color: rgba(240, 227, 210, 0.88);
   line-height: 1.4;
+}
+
+@media (max-width: 32rem), (max-height: 46rem) {
+  .sheet-panel-cover {
+    padding: 0.45rem 0.65rem 0.6rem;
+  }
+
+  .sheet-cover-image {
+    padding: 0.45rem 0.5rem 0.15rem;
+  }
+
+  .sheet-cover-caption {
+    padding: 0.55rem 0.75rem 0.65rem;
+  }
+
+  .sheet-cover-name {
+    margin-bottom: 0.15rem;
+    font-size: 1.15rem;
+  }
+
+  .sheet-cover-pairing-teaser {
+    font-size: 0.78rem;
+    line-height: 1.25;
+  }
+}
+
+@media (max-width: 20rem), (max-height: 34rem) {
+  .sheet-handle-wrap {
+    min-height: 1.75rem;
+    padding-top: 0.15rem;
+  }
+
+  .sheet-head-compact {
+    padding: 0.1rem 0.75rem 0.4rem;
+  }
+
+  .sheet-kicker,
+  .sheet-sub,
+  .sheet-swipe-hint,
+  .sheet-cover-pairing-teaser {
+    display: none;
+  }
+
+  .sheet-cover-caption {
+    padding: 0.35rem 0.6rem 0.4rem;
+  }
+
+  .sheet-cover-name {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .sheet-carousel-footer {
+    padding-top: 0.35rem;
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
 }
 
 .sheet-carousel-footer {

@@ -284,13 +284,14 @@ export function WineDetailSheet({ wine, onClose }: Props) {
               <div ref={carouselTrackRef} className="sheet-carousel-track">
                 <section className="sheet-panel sheet-panel-cover" aria-label={t.slideCover}>
                   <div className="sheet-cover-stage">
-                    <img
-                      className="sheet-cover-bottle"
-                      src={wine.bottleImage}
-                      alt=""
-                      decoding="async"
-                    />
-                    <div className="sheet-cover-veil" aria-hidden />
+                    <div className="sheet-cover-image">
+                      <img
+                        className="sheet-cover-bottle"
+                        src={wine.bottleImage}
+                        alt=""
+                        decoding="async"
+                      />
+                    </div>
                     <div className="sheet-cover-caption">
                       <p className="sheet-cover-name">{wine.name}</p>
                       <p className="sheet-cover-pairing-teaser">{wine.pairing.dishName}</p>

@@ -46,7 +46,7 @@ export const UI: Record<Locale, UiStrings> = {
   },
   en: {
     eyebrow: 'Private tasting',
-    title: 'Tonight’s line-up',
+    title: 'Today’s line-up',
     lede: 'Tap a bottle, then swipe through the wine notes and the paired dish.',
     close: 'Close',
     journeyLabel: 'The wine',
